@@ -6,8 +6,7 @@
 #include <vector>
 #include <fstream>
 #include <cmath>
-#define ID_EDIT 1
-#define ID_LIST 2
+#define IDT_TIMER1 1
 using namespace std;
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 BOOL InitApplication(HINSTANCE hInstance);
@@ -22,6 +21,7 @@ const int n = 3;
 int Score = 0;
 bool bot = false;
 string sScore	;
+
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -300,6 +300,140 @@ void newGame(){
 	Score = 0;
 }
 
+void performMove(HWND hwnd) {
+	static bool same;
+	same = true;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			same &= tmp[i][j] == matrix[i][j];
+		}
+	}
+	if (!same) {
+		addRandomTile();
+		InvalidateRect(hwnd, NULL, true);
+	}
+	if (isGameOver())
+	{
+		bot = false;
+		KillTimer(hwnd, IDT_TIMER1);
+		MessageBox(hwnd, "GAME OVER", ":(", 0);
+		newGame();
+		InvalidateRect(hwnd, NULL, true);
+	}
+}
+
+typedef double AI_T;
+int max_step;
+int best_operation = 0;
+vector<short> grid(16);
+int node = 0;
+int max_depth = 3;
+
+inline AI_T Estimate(vector<short>& grid) {
+	AI_T sum = 0;
+	AI_T penalty = 0;
+	for (int i = 0; i < 16; ++i) {
+		sum += grid[i];
+		if (i % 4 != 3) {
+			penalty += abs(grid[i] - grid[i + 1]);
+		}
+		if (i < 12) {
+			penalty += abs(grid[i] - grid[i + 4]);
+		}
+	}
+	return (sum * 4 - penalty) * 2;
+}
+
+AI_T Search(vector<short> s, int depth) {
+	node++;
+	if (depth >= max_depth) 
+		return Estimate(s);
+	AI_T best = -1;
+	vector<short> result(16);
+	for (int i = 0; i < 4; ++i) {
+		int k = 0;
+		int base = 0;
+		AI_T score = 0;
+		for (int i = 4; i <= 16; i += 4) {
+			while (k < i) {
+				if (s[k] == 0) {
+					++k;
+					continue;
+				}
+				if (k + 1 < i && s[k] == s[k + 1]) {
+					result[base++] = s[k] * 2;
+					score += s[k] * 2;
+					k += 2;
+				}
+				else {
+					result[base++] = s[k++];
+				}
+			}
+			while (base < i) {
+				result[base++] = 0;
+			}
+		}
+
+		bool same = true;
+		for (int j = 0; j < 16; ++j) {
+			if (result[j] != s[j]) {
+				same = false;
+				break;
+			}
+		}
+		if (!same) {
+			AI_T temp = 0;
+			AI_T empty_slots = 0;
+			for (int j = 0; j < 16; ++j) {
+				if (result[j] == 0) {
+					result[j] = 1;
+					++empty_slots;
+					temp += Search(result, depth + 1) * 0.9;
+					result[j] = 2;
+					temp += Search(result, depth + 1) * 0.1;
+					result[j] = 0;
+				}
+			}
+			if (empty_slots != 0) {
+				temp /= empty_slots;
+			}
+			else {
+				temp = -1e+13;
+			}
+
+			if (score + temp > best) {
+				best = score + temp;
+				if (depth == 0) {
+					best_operation = i;
+				}
+			}
+		}
+		if (i != 3) {
+			short* newS = new short[16] { s[12], s[8], s[4], s[0],
+				s[13], s[9], s[5], s[1],
+				s[14], s[10], s[6], s[2],
+				s[15], s[11], s[7], s[3] };
+			for (int i = 0; i < 16; i++)
+				s[i] = newS[i];
+			delete[] newS;
+		}
+	}
+	return best;
+}
+
+int startSearch() {
+	node = 0;
+	max_depth = 3;
+	while (true) {
+		node = 0;
+		Search(grid, 0);
+		if (node >= 10000 || max_depth >= 10) break;
+		max_depth += 1;
+	}
+	return best_operation;
+}
+
+
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	static HINSTANCE  hInst;
@@ -404,24 +538,29 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		if (wParam == 'd' || wParam == 'D') {
 			moveRight();
 		}
-		static bool same;
-		same = true;
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < M; j++) {
-				same &= tmp[i][j] == matrix[i][j];
-			}
-		}
-		if (!same) {
-			addRandomTile();
-			InvalidateRect(hwnd, NULL, true);
-		}
-		if (isGameOver())
+		performMove(hwnd);
+		break;
+
+	case WM_TIMER:
+
+		switch (wParam)
 		{
-			MessageBox(hwnd, "GAME OVER", ":(", 0);
-			
-			newGame();
-			InvalidateRect(hwnd, NULL, true);
+		case IDT_TIMER1:
+			for (int i = 0; i < 16; i++)
+				grid[i] = (matrix[i / 4][i % 4] == 0 ? 0 : 1<<matrix[i / 4][i % 4]);
+			best_operation = 0;
+			int a = startSearch();
+			switch (a)
+			{
+			case 0: moveLeft(); break;
+			case 1: moveDown(); break;
+			case 2: moveRight(); break;
+			case 3: moveUp(); break;
+			}
+			performMove(hwnd);
+			break;
 		}
+
 		break;
 
 	case WM_COMMAND:
@@ -432,9 +571,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			InvalidateRect(hwnd, NULL, true);
 			break;
 		case ID_BOT :
+			SetTimer(hwnd, IDT_TIMER1, 10, (TIMERPROC)NULL);
 			bot = true;
 			break;
 		case ID_PLAYER:
+			KillTimer(hwnd, IDT_TIMER1);
 			bot = false;
 			break;
 		

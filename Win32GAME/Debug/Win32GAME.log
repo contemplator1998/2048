@@ -1,14 +1,20 @@
-﻿Build started 04.04.2016 21:56:19.
-     1>Project "D:\универ\Win32GAME\Win32GAME\Win32GAME.vcxproj" on node 2 (Build target(s)).
+﻿Build started 06.04.2016 1:59:38.
+     1>Project "D:\Users\Contemplator\Documents\GitHub\2048\Win32GAME\Win32GAME.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
          main.cpp
+     1>d:\users\contemplator\documents\github\2048\win32game\main.cpp(425): warning C4258: 'i' : definition from the for loop is ignored; the definition from the enclosing scope is used
+                 d:\users\contemplator\documents\github\2048\win32game\main.cpp(375) : definition of 'i' ignored
+                 d:\users\contemplator\documents\github\2048\win32game\main.cpp(369) : definition of 'i' used
+     1>d:\users\contemplator\documents\github\2048\win32game\main.cpp(431): warning C4258: 'i' : definition from the for loop is ignored; the definition from the enclosing scope is used
+                 d:\users\contemplator\documents\github\2048\win32game\main.cpp(375) : definition of 'i' ignored
+                 d:\users\contemplator\documents\github\2048\win32game\main.cpp(369) : definition of 'i' used
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\универ\Win32GAME\Debug\Win32GAME.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\универ\Win32GAME\Debug\Win32GAME.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\универ\Win32GAME\Debug\Win32GAME.lib" /MACHINE:X86 Debug\Win32GAME.res
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\Users\Contemplator\Documents\GitHub\2048\Debug\Win32GAME.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\Users\Contemplator\Documents\GitHub\2048\Debug\Win32GAME.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\Users\Contemplator\Documents\GitHub\2048\Debug\Win32GAME.lib" /MACHINE:X86 Debug\Win32GAME.res
          Debug\main.obj
-         Win32GAME.vcxproj -> D:\универ\Win32GAME\Debug\Win32GAME.exe
-     1>Done Building Project "D:\универ\Win32GAME\Win32GAME\Win32GAME.vcxproj" (Build target(s)).
+         Win32GAME.vcxproj -> D:\Users\Contemplator\Documents\GitHub\2048\Debug\Win32GAME.exe
+     1>Done Building Project "D:\Users\Contemplator\Documents\GitHub\2048\Win32GAME\Win32GAME.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:02.98
+Time Elapsed 00:00:01.75
